@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 
-/// 🎨 Warna utama tema Kamus Arab
-const kPrimary = Color(0xFF2196F3); // biru
-const kSecondary = Color(0xFF26C6DA); // cyan lembut
-const kBackground = Color(0xFFF3F5F9);
+const kPrimary = Color(0xFF1976D2);
+const kSecondary = Color(0xFF64B5F6);
+const kBackground = Color(0xFFF8F9FB);
+const kTextDark = Color(0xFF212121);
 const kCard = Color(0xFFFFFFFF);
-const kShadow = Color(0x1A000000); // transparan
-const kTextDark = Color(0xFF222831);
-const kTextLight = Color(0xFF757575);
+const kShadow = Color(0x1A000000);
 
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,

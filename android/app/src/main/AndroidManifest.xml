@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="Kamus AL-Itirbaath"
+        android:label="Kamus AL-Irtibaath"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -1,12 +1,13 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:kamus_alirbaath/app/data/models/word_models.dart';
 import '../../detail/views/detail_view.dart';
 
 class HomeController extends GetxController {
   final TextEditingController searchC = TextEditingController();
+  final RxString searchText = ''.obs;
 
   final words = <WordModel>[].obs;
   final filteredWords = <WordModel>[].obs;
@@ -15,44 +16,35 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     loadJsonData();
+    searchC.addListener(() => searchWord(searchC.text));
   }
 
   Future<void> loadJsonData() async {
-    try {
-      final jsonString = await rootBundle.loadString(
-        'assets/data/words_formatted.json',
-      );
-      final List<dynamic> jsonList = json.decode(jsonString);
-
-      words.assignAll(jsonList.map((e) => WordModel.fromJson(e)).toList());
-      filteredWords.assignAll(words);
-    } catch (e) {
-      print("❌ Error loading JSON: $e");
-    }
+    final jsonString = await rootBundle.loadString(
+      'assets/data/words_formatted.json',
+    );
+    final List<dynamic> jsonList = json.decode(jsonString);
+    words.assignAll(jsonList.map((e) => WordModel.fromJson(e)).toList());
+    filteredWords.assignAll(words);
   }
 
   void searchWord(String query) {
+    searchText.value = query; // 🟢 simpan query untuk trigger Obx
     query = query.trim().toLowerCase();
     if (query.isEmpty) {
       filteredWords.assignAll(words);
       return;
     }
-
-    final results =
-        words.where((w) {
-          final arab = w.kolokasi.toLowerCase();
-          final arti = w.arti.toLowerCase();
-          return arab.contains(query) || arti.contains(query);
-        }).toList();
-
-    filteredWords.assignAll(results);
+    filteredWords.assignAll(
+      words.where(
+        (w) =>
+            w.kolokasi.toLowerCase().contains(query) ||
+            w.arti.toLowerCase().contains(query),
+      ),
+    );
   }
 
   void openDetail(WordModel word) {
-    Get.to(
-      () => const DetailView(),
-      arguments: word,
-      transition: Transition.cupertino,
-    );
+    Get.to(() => const DetailView(), arguments: word);
   }
 }
