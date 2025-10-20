@@ -65,28 +65,26 @@ class HomeView extends GetView<HomeController> {
                     children: [
                       // Logo/Icon
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white,
                           shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 2,
-                          ),
+                          border: Border.all(color: Colors.white, width: 1),
                         ),
-                        child: Icon(
-                          Icons.menu_book_rounded,
-                          size: 36,
-                          color: Colors.white.withOpacity(0.95),
+                        child: Image.asset(
+                          "assets/icons/logo_new.png",
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.contain,
                         ),
                       ),
                       const SizedBox(height: 16),
 
                       // Title
                       Text(
-                        "Kamus Al-Irtibāath",
+                        "Kamus Kolokasi Bahasa Arab",
                         style: TextStyle(
-                          fontSize: 28,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           letterSpacing: 0.5,
@@ -101,9 +99,9 @@ class HomeView extends GetView<HomeController> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        "عربي - إندونيسي",
+                        "Al - Irtibaath",
                         style: TextStyle(
-                          fontFamily: 'Amiri',
+                          fontFamily: "Amiri",
                           fontSize: 18,
                           color: Colors.white.withOpacity(0.85),
                           letterSpacing: 1,
