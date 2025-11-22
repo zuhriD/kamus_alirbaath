@@ -1,5 +1,6 @@
 class WordModel {
   final int id;
+  final String arabGundul;
   final String kolokasi;
   final String arti;
   final List<ContohKalimat> contohKalimat;
@@ -7,6 +8,7 @@ class WordModel {
 
   WordModel({
     required this.id,
+    required this.arabGundul,
     required this.kolokasi,
     required this.arti,
     required this.contohKalimat,
@@ -16,6 +18,7 @@ class WordModel {
   factory WordModel.fromJson(Map<String, dynamic> json) {
     return WordModel(
       id: json['id'] ?? 0,
+      arabGundul: json['arab_gundul'] ?? '',
       kolokasi: json['kolokasi'] ?? '',
       arti: json['arti'] ?? '',
       contohKalimat:

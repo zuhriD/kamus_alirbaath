@@ -12,6 +12,12 @@ class HomeController extends GetxController {
   final words = <WordModel>[].obs;
   final filteredWords = <WordModel>[].obs;
 
+  final RxInt currentTab = 0.obs;
+
+  void changeTab(int index) {
+    currentTab.value = index;
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -21,7 +27,7 @@ class HomeController extends GetxController {
 
   Future<void> loadJsonData() async {
     final jsonString = await rootBundle.loadString(
-      'assets/data/words_formatted.json',
+      'assets/data/words_formatted_new.json',
     );
     final List<dynamic> jsonList = json.decode(jsonString);
     words.assignAll(jsonList.map((e) => WordModel.fromJson(e)).toList());
@@ -38,6 +44,7 @@ class HomeController extends GetxController {
     filteredWords.assignAll(
       words.where(
         (w) =>
+            w.arabGundul.toLowerCase().contains(query) ||
             w.kolokasi.toLowerCase().contains(query) ||
             w.arti.toLowerCase().contains(query),
       ),

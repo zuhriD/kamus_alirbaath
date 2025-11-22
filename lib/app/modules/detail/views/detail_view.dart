@@ -1,8 +1,14 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kamus_alirbaath/app/data/models/word_models.dart';
 import 'package:kamus_alirbaath/app/theme/app_theme.dart';
+
+// Samakan brand color dengan Home
+const Color brandPrimary = Color(0xFF5D4B8A); // deep purple
+const Color brandSecondary = Color(0xFFC8A6D1); // soft lavender;
+const Color brandAccent = Color(0xFFE8D6F5); // pale lavender
 
 class DetailView extends StatefulWidget {
   const DetailView({super.key});
@@ -45,6 +51,19 @@ class _DetailViewState extends State<DetailView>
     super.dispose();
   }
 
+  Future<void> _copyToClipboard(String text, {String? message}) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    Get.snackbar(
+      'Disalin',
+      message ?? 'Teks telah disalin ke clipboard.',
+      snackPosition: SnackPosition.BOTTOM,
+      margin: const EdgeInsets.all(16),
+      backgroundColor: Colors.black87,
+      colorText: Colors.white,
+      borderRadius: 12,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final WordModel word = Get.arguments;
@@ -52,15 +71,11 @@ class _DetailViewState extends State<DetailView>
     return Scaffold(
       body: Stack(
         children: [
-          // 🎨 Background gradient
+          // 🎨 Background gradient (nuansa ungu-lavender seperti Home)
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  kPrimary.withOpacity(0.1),
-                  kSecondary.withOpacity(0.05),
-                  Colors.white,
-                ],
+                colors: [brandPrimary, brandSecondary, Colors.white],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -76,7 +91,7 @@ class _DetailViewState extends State<DetailView>
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: kPrimary.withOpacity(0.05),
+                color: Colors.white.withOpacity(0.06),
               ),
             ),
           ),
@@ -106,7 +121,7 @@ class _DetailViewState extends State<DetailView>
                         child: IconButton(
                           icon: const Icon(
                             Icons.arrow_back_rounded,
-                            color: kPrimary,
+                            color: brandPrimary,
                           ),
                           onPressed: () => Get.back(),
                         ),
@@ -115,11 +130,12 @@ class _DetailViewState extends State<DetailView>
                       Expanded(
                         child: Text(
                           'Detail "${word.kolokasi}"',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: kTextDark,
+                            color: Colors.white,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -138,15 +154,15 @@ class _DetailViewState extends State<DetailView>
                           // 📖 Main Word Card
                           Container(
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [kPrimary, kSecondary],
+                              gradient: const LinearGradient(
+                                colors: [brandPrimary, brandSecondary],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
                               borderRadius: BorderRadius.circular(24),
                               boxShadow: [
                                 BoxShadow(
-                                  color: kPrimary.withOpacity(0.3),
+                                  color: brandPrimary.withOpacity(0.3),
                                   blurRadius: 20,
                                   offset: const Offset(0, 8),
                                 ),
@@ -163,7 +179,7 @@ class _DetailViewState extends State<DetailView>
                                     height: 150,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Colors.white.withOpacity(0.1),
+                                      color: Colors.white.withOpacity(0.08),
                                     ),
                                   ),
                                 ),
@@ -175,7 +191,7 @@ class _DetailViewState extends State<DetailView>
                                     height: 100,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Colors.white.withOpacity(0.05),
+                                      color: Colors.white.withOpacity(0.04),
                                     ),
                                   ),
                                 ),
@@ -186,23 +202,6 @@ class _DetailViewState extends State<DetailView>
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      // Icon
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.2),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.menu_book_rounded,
-                                          color: Colors.white.withOpacity(0.9),
-                                          size: 28,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 20),
-
                                       // Arabic text
                                       Hero(
                                         tag: word.kolokasi,
@@ -229,10 +228,11 @@ class _DetailViewState extends State<DetailView>
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(height: 16),
+                                      const SizedBox(height: 20),
 
                                       // Indonesian meaning
                                       Container(
+                                        width: double.infinity,
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 16,
                                           vertical: 12,
@@ -254,6 +254,38 @@ class _DetailViewState extends State<DetailView>
                                           ),
                                         ),
                                       ),
+
+                                      const SizedBox(height: 16),
+
+                                      // 🔗 Copy button untuk kolokasi + arti
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: TextButton.icon(
+                                          style: TextButton.styleFrom(
+                                            foregroundColor: Colors.white,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 0,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            final text =
+                                                '${word.kolokasi}\n${word.arti}';
+                                            _copyToClipboard(
+                                              text,
+                                              message:
+                                                  'Kolokasi dan arti telah disalin.',
+                                            );
+                                          },
+                                          icon: const Icon(
+                                            Icons.copy_rounded,
+                                            size: 18,
+                                          ),
+                                          label: const Text(
+                                            'Salin kolokasi & arti',
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -269,13 +301,15 @@ class _DetailViewState extends State<DetailView>
                               Container(
                                 width: 4,
                                 height: 24,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   gradient: LinearGradient(
-                                    colors: [kPrimary, kSecondary],
+                                    colors: [brandPrimary, brandSecondary],
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
                                   ),
-                                  borderRadius: BorderRadius.circular(2),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(2),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -353,7 +387,7 @@ class _DetailViewState extends State<DetailView>
                                     borderRadius: BorderRadius.circular(20),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: kPrimary.withOpacity(0.08),
+                                        color: brandPrimary.withOpacity(0.08),
                                         blurRadius: 15,
                                         offset: const Offset(0, 4),
                                       ),
@@ -367,8 +401,8 @@ class _DetailViewState extends State<DetailView>
                                           left: BorderSide(
                                             color:
                                                 index.isEven
-                                                    ? kPrimary
-                                                    : kSecondary,
+                                                    ? brandPrimary
+                                                    : brandSecondary,
                                             width: 4,
                                           ),
                                         ),
@@ -379,7 +413,7 @@ class _DetailViewState extends State<DetailView>
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            // Number badge
+                                            // Header baris atas (nomor + tombol copy)
                                             Row(
                                               children: [
                                                 Container(
@@ -390,12 +424,12 @@ class _DetailViewState extends State<DetailView>
                                                       colors:
                                                           index.isEven
                                                               ? [
-                                                                kPrimary,
-                                                                kSecondary,
+                                                                brandPrimary,
+                                                                brandSecondary,
                                                               ]
                                                               : [
-                                                                kSecondary,
-                                                                kPrimary,
+                                                                brandSecondary,
+                                                                brandPrimary,
                                                               ],
                                                     ),
                                                     borderRadius:
@@ -416,10 +450,21 @@ class _DetailViewState extends State<DetailView>
                                                   ),
                                                 ),
                                                 const Spacer(),
-                                                Icon(
-                                                  Icons.translate_rounded,
-                                                  size: 20,
-                                                  color: Colors.grey[400],
+                                                IconButton(
+                                                  onPressed: () {
+                                                    final text =
+                                                        '${sentence.arab}\n${sentence.indo}';
+                                                    _copyToClipboard(
+                                                      text,
+                                                      message:
+                                                          'Contoh kalimat telah disalin.',
+                                                    );
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.copy_rounded,
+                                                    size: 18,
+                                                    color: Colors.grey[500],
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -427,9 +472,10 @@ class _DetailViewState extends State<DetailView>
 
                                             // Arabic sentence
                                             Container(
+                                              width: double.infinity,
                                               padding: const EdgeInsets.all(16),
                                               decoration: BoxDecoration(
-                                                color: kPrimary.withOpacity(
+                                                color: brandPrimary.withOpacity(
                                                   0.05,
                                                 ),
                                                 borderRadius:
@@ -444,7 +490,7 @@ class _DetailViewState extends State<DetailView>
                                                   style: const TextStyle(
                                                     fontFamily: 'Amiri',
                                                     fontSize: 20,
-                                                    color: kPrimary,
+                                                    color: brandPrimary,
                                                     height: 1.8,
                                                     fontWeight: FontWeight.w600,
                                                   ),
@@ -477,7 +523,7 @@ class _DetailViewState extends State<DetailView>
                                                 Expanded(
                                                   child: Text(
                                                     sentence.indo,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontSize: 16,
                                                       color: kTextDark,
                                                       height: 1.5,
